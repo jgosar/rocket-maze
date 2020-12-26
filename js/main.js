@@ -1,46 +1,3 @@
-const config = {
-	simulationStepMs: 100,
-	wallThickness: 10,
-	accelerateOnClick: 1,
-	gravity: {
-		x: 0,
-		y: 0.2
-	}
-};
-
-const mazes = {
-	maze1: {
-		width: 800,
-		height: 800,
-		walls: [
-			{
-				position: {
-					x: 200,
-					y: 400,
-				},
-				length: 100,
-				direction: 'x'
-			},
-			{
-				position: {
-					x: 200,
-					y: 300,
-				},
-				length: 100,
-				direction: 'y'
-			},
-			{
-				position: {
-					x: 300,
-					y: 300,
-				},
-				length: 100,
-				direction: 'y'
-			},
-		]
-	}
-}
-
 let appState = {
 	rocket: {
 		position: {
@@ -100,24 +57,43 @@ function initMaze(maze){
 	maze.walls.forEach(wall=>createWall(mazeElement, wall));
 }
 
+function rotateRight(){
+	appState={
+		...appState,
+		rocket: rotate(appState.rocket, 15)
+	};
+	repaint();
+}
+
+function rotateLeft(){
+	appState={
+		...appState,
+		rocket: rotate(appState.rocket, -15)
+	};
+	repaint();
+}
+
 function initListeners(){
-	// TODO: listeners for watch bezel events
 	document.addEventListener('keyup', (e) => {
-		if(e.code === "KeyA"){
-			appState={
-				...appState,
-				rocket: rotate(appState.rocket, -30)
-			};
-			repaint();
-		}
+		// Fake watch rotation events for testing on PC
 		if(e.code === "KeyD"){
-			appState={
-				...appState,
-				rocket: rotate(appState.rocket, 30)
-			};
-			repaint();
+			document.dispatchEvent(new CustomEvent('rotarydetent', {detail:{direction: 'CW'}}));
+		}
+		if(e.code === "KeyA"){
+			document.dispatchEvent(new CustomEvent('rotarydetent', {detail:{direction: 'CCW'}}));
 		}
 	});
+    
+    document.addEventListener("rotarydetent", function(e)
+    {
+    	const direction = e.detail.direction;
+
+    	if (direction === "CW") {
+			rotateRight();
+    	} else if (direction === "CCW") {
+			rotateLeft();
+    	}
+    });
 	document.addEventListener("click", ()=>{
 		appState={
 			...appState,
@@ -128,7 +104,7 @@ function initListeners(){
 
 function initSimulation(){
 	initListeners();
-	initMaze(mazes.maze1);
+	initMaze(levels[0]);
 	repaint();
 	
 	setTimeout(setupTransitionInterval);

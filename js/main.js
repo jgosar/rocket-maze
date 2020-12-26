@@ -2,20 +2,31 @@ let appState = {
 	rocket: {
 		position: {
 			x: 250,
-			y: 365,
+			y: 350,
 		},
 		speed: {
 			x: 0,
 			y: 0,
 		},
 		rotation: 0,
-	}
+	},
+	collisions: [],
+	mazeEdges: []
 };
 
+let repaintInterval;
+
 function simulateStep(){
+	const rocket = simulatePhysics(appState.rocket, config.gravity);
+	const collisions = detectRocketMazeCollisions(appState.rocket, appState.mazeEdges);
+	if(collisions){
+		clearInterval(repaintInterval);
+	}
+	
 	appState={
 		...appState,
-		rocket: simulatePhysics(appState.rocket, config.gravity)
+		rocket,
+		collisions
 	};
 }
 
@@ -32,23 +43,24 @@ function setupTransitionInterval(){
 }
 
 function createWall(mazeElement, wall){
+	const wallRectangle = getWallRectangle(wall, config.wallThickness);
+	
 	const wallElement = document.createElement('div');
 	wallElement.setAttribute('class', 'wall');
-	wallElement.style.top = (wall.position.y-(config.wallThickness/2))+'px';
-	wallElement.style.left = (wall.position.x-(config.wallThickness/2))+'px';
-	
-	if(wall.direction==='x'){
-		wallElement.style.width = (wall.length+config.wallThickness)+'px';
-		wallElement.style.height = config.wallThickness+'px';
-	} else{
-		wallElement.style.width = config.wallThickness+'px';
-		wallElement.style.height = (wall.length+config.wallThickness)+'px';
-	}
+	wallElement.style.left = wallRectangle.x+'px';
+	wallElement.style.top = wallRectangle.y+'px';
+	wallElement.style.width = wallRectangle.width+'px';
+	wallElement.style.height = wallRectangle.height+'px';
 	
 	mazeElement.appendChild(wallElement);
 }
 
 function initMaze(maze){
+	appState = {
+		...appState,
+		mazeEdges: getMazeEdges(maze, config.wallThickness)
+	};
+	
 	const root = document.documentElement;
 	root.style.setProperty('--maze-width', maze.width + 'px');
 	root.style.setProperty('--maze-height', maze.height + 'px');
@@ -109,7 +121,7 @@ function initSimulation(){
 	
 	setTimeout(setupTransitionInterval);
 	
-	setIntervalStartNow(()=>{
+	repaintInterval = setIntervalStartNow(()=>{
 		simulateStep();
 		repaint();
 	}, config.simulationStepMs);

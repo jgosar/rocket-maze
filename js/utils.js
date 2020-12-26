@@ -7,6 +7,10 @@ function toRadians (angle) {
   return angle * (Math.PI / 180);
 }
 
+function mod(n, m) {
+  return ((n % m) + m) % m;
+}
+
 function addVectors(...vectors){
 	return vectors.reduce((prev, next)=>({x:prev.x+next.x, y: prev.y+next.y}), {x:0, y:0});
 }
@@ -17,6 +21,46 @@ function createVector(direction, length){
 		x: length * Math.sin(directionRadians),
 		y: - length * Math.cos(directionRadians),
 	}
+}
+
+function getVectorDirection(vector){
+	if(vector.y===0){
+		return mod(Math.sign(vector.x)*90, 360);
+	}
+	const ratio = vector.x / (- vector.y);
+	let direction = toDegrees(Math.atan(ratio));
+	if(vector.y>0){
+		direction += 180;
+	}
+	return mod(direction, 360);
+}
+
+function rotateVector(vector, rotation){
+	const direction = getVectorDirection(vector);
+	const length = Math.hypot(vector.x, vector.y);
+	
+	return createVector(direction + rotation, length);
+}
+
+function getRectangeVertices(rectangle){
+	return [
+		{
+			x: rectangle.x,
+			y: rectangle.y,
+		},
+		{
+			x: rectangle.x+rectangle.width,
+			y: rectangle.y,
+		},
+		{
+			x: rectangle.x+rectangle.width,
+			y: rectangle.y+rectangle.height,
+		},
+		{
+			x: rectangle.x,
+			y: rectangle.y+rectangle.height,
+		},
+	];
 }
 
 // Physics utils

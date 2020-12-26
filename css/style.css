@@ -6,9 +6,10 @@
 	--rocket-size: 60px;
 	--rocket-x: 0px; /* Overridden by Javascript */
 	--rocket-y: 0px; /* Overridden by Javascript */
+	--rocket-rotation: 0deg; /* Overridden by Javascript */
 	
-	--maze-width: 800px;
-	--maze-height: 800px;
+	--maze-width: 0px; /* Overridden by Javascript */
+	--maze-height: 0px; /* Overridden by Javascript */
 	
 	--maze-offset-x: calc((var(--viewport-width) / 2) - var(--rocket-x));
 	--maze-offset-y: calc((var(--viewport-height) / 2) - var(--rocket-y));
@@ -35,6 +36,7 @@ body{
 .rocket{
 	width: var(--rocket-size);
 	height: var(--rocket-size);
+	transform: rotate(var(--rocket-rotation));
 	fill: #D0D0D0;
 }
 

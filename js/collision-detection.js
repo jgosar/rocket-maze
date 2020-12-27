@@ -56,9 +56,83 @@ function edgesIntersect([p1, q1], [p2, q2]){
     return false; // Doesn't fall in any of the above cases 
 }
 
+function median(arr){
+  const mid = Math.floor(arr.length / 2);
+  const nums = [...arr].sort((a, b) => a - b);
+  return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
+};
+
+function isBetween(num, start, end){
+	return num>=Math.min(start, end) && num<=Math.max(start, end);
+}
+
+function rangesOverlap(start1, end1, start2, end2){
+	return isBetween(start1, start2, end2) || 
+			isBetween(end1, start2, end2) || 
+			isBetween(start2, start1, end1) || 
+			isBetween(end2, start1, end1);
+}
+
+function getIntersection([start1, end1], [start2, end2]){
+	// If the lines are not in the same area, we do an early exit
+	if(!rangesOverlap(start1.x, end1.x, start2.x, end2.x) || !rangesOverlap(start1.y, end1.y, start2.y, end2.y)){
+		return undefined;
+	}
+	
+	const dx1 = end1.x-start1.x;
+	const dy1 = end1.y-start1.y;
+	const dx2 = end2.x-start2.x;
+	const dy2 = end2.y-start2.y;
+	
+	if(dx1===0 && dx2===0){ // Both lines are vertical
+		if(start1.x === start2.x){ // Lines are colinear
+			return {x: start1.x, y: median([start1.y, end1.y, start2.y, end2.y])}
+		} else { // Lines are parralel
+			return undefined;
+		}
+	}
+	
+	const k1 = dy1/dx1;
+	const k2 = dy2/dx2;
+	const n1 = start1.y - k1 * start1.x;
+	const n2 = start2.y - k2 * start2.x;
+	
+	let intersectionX;
+	if(dx1===0){ // Line 1 is vertical
+		intersectionX = start1.x;
+	} else if(dx2===0){ // Line 2 is vertical
+		intersectionX = start2.x;
+	} else if(k1===k2){
+		if(n1===n2){ // Lines are colinear
+			return {x: median([start1.x, end1.x, start2.x, end2.x]), y: median([start1.y, end1.y, start2.y, end2.y])}
+		} else{ // Lines are parralel
+			return undefined;
+		}
+	} else{ // General case: Random lines in random directions
+		intersectionX = (n2-n1)/(k1-k2);
+	}
+	
+	const intersectionY = k1 * intersectionX + n1;
+	
+	if(isBetween(intersectionX, start1.x, end1.x) &&
+		isBetween(intersectionX, start2.x, end2.x) &&
+		isBetween(intersectionY, start1.y, end1.y) &&
+		isBetween(intersectionY, start2.y, end2.y)){
+			// Lines actually do intersect
+		return [intersectionX, intersectionY];
+	}
+	
+	// Lines don't reach each other
+	return undefined;
+}
+
 // Logic specific to RocketMaze
 function detectRocketMazeCollisions(rocket, mazeEdges){
 	return detectCollisions(getRocketEdges(rocket), mazeEdges);
+}
+
+function getRocketMazeCollisions(rocket, mazeEdges){
+	return getCollisions(getRocketEdges(rocket), mazeEdges);
 }
 
 function getRocketEdges(rocket){
@@ -133,3 +207,17 @@ function getClosedPathEdges(vertices){
 function detectCollisions(edges1, edges2){
 	return edges1.some(edge1=>edges2.some(edge2=>edgesIntersect(edge1, edge2)));
 }
+
+function concatIfDefined(items, newItem){
+	if(newItem!==undefined){
+		return items.concat([newItem]);
+	} else{
+		return items;
+	}
+}
+
+function getCollisions(edges1, edges2){
+	return edges1.map(edge1=>edges2.reduce((allCollisions, edge2)=>concatIfDefined(allCollisions, getIntersection(edge1, edge2)), []));
+}
+
+

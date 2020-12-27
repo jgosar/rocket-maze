@@ -20,7 +20,14 @@ function simulateStep(){
 	const rocket = simulatePhysics(appState.rocket, config.gravity);
 	const collisions = detectRocketMazeCollisions(appState.rocket, appState.mazeEdges);
 	if(collisions){
+		console.log(getRocketMazeCollisions(appState.rocket, appState.mazeEdges));
 		clearInterval(repaintInterval);
+		/*
+		TODO:
+		stroke-width: 0.8px;
+    stroke: red;
+    stroke-linecap: round;
+	*/
 	}
 	
 	appState={

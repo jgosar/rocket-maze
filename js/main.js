@@ -94,14 +94,6 @@ function loadMaze(){
 	maze.walls.forEach(createWallElement);
 }
 
-function removeHtmlElement(element){
-	element.parentNode.removeChild(element);
-}
-
-function removeCssClass({element, cssClass}){
-	element.classList.remove(cssClass);
-}
-
 function clearTemporaryHtmlElementsAndCssClasses(){
 	appState.temporaryHtmlElements.forEach(removeHtmlElement);
 	appState.temporaryCssClasses.forEach(removeCssClass);

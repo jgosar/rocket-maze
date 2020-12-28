@@ -98,7 +98,7 @@ function getWallRectangle(wall, wallThickness){
 		y: wall.position.y-(wallThickness/2)
 	};
 	
-	if(wall.direction==='x'){
+	if(wall.orientation==='x'){
 		rectangle.width = wall.length+wallThickness;
 		rectangle.height = wallThickness;
 	} else{

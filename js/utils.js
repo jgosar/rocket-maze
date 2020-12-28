@@ -104,6 +104,15 @@ function accelerate(object, direction, deltaV){
 	};
 }
 
+// DOM utils
+function removeHtmlElement(element){
+	element.parentNode.removeChild(element);
+}
+
+function removeCssClass({element, cssClass}){
+	element.classList.remove(cssClass);
+}
+
 // JS utils
 function setIntervalStartNow(fn, t) {
 	setTimeout(()=>{

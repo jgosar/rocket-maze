@@ -1,9 +1,13 @@
 let appState = {
 	rocket: undefined,
-	mazeEdges: []
+	mazeEdges: [],
+	currentLevel: 0,
+	temporaryHtmlElements: [],
+	temporaryCssClasses: []
 };
 
 let repaintInterval;
+let stopRepaintingTimeout;
 let rootElement;
 let mazeElement;
 let rocketElement;
@@ -12,11 +16,10 @@ function simulateStep(){
 	const rocket = simulatePhysics(appState.rocket, config.gravity);
 	const collisions = getRocketMazeCollisions(appState.rocket, appState.mazeEdges);
 	if(collisions.length>0){
-		console.log(collisions);
 		collisions.forEach(createExplosionElement);
 		if(!rocket.exploded){
 			// We could stop repainting immediately, but if we wait for a bit, there will be more spectacular explosions :)
-			setTimeout(()=>clearInterval(repaintInterval), config.explosionDurationMs);
+			stopRepaintingTimeout = setTimeout(()=>clearInterval(repaintInterval), config.explosionDurationMs);
 		}
 		rocket.exploded = true;
 	}
@@ -33,8 +36,20 @@ function repaint(){
 	rootElement.style.setProperty('--rocket-rotation', appState.rocket.rotation + 'deg');
 	
 	if(appState.rocket.exploded){
-		rocketElement.setAttribute('class', 'rocket rocket--exploded');
+		addTemporaryCssClass(rocketElement, 'rocket--exploded');
 	}
+}
+
+function addTemporaryCssClass(element, cssClass){
+	if(!element.classList.contains(cssClass)){
+		element.classList.add(cssClass);
+		appState.temporaryCssClasses.push({element, cssClass});
+	}
+}
+
+function addTemporaryHtmlElement(parent, element){
+	parent.appendChild(element);
+	appState.temporaryHtmlElements.push(element);
 }
 
 function setupAnimations(){
@@ -48,7 +63,7 @@ function createExplosionElement([x, y]){
 	explosionElement.style.left = x+'px';
 	explosionElement.style.top = y+'px';
 	
-	mazeElement.appendChild(explosionElement);
+	addTemporaryHtmlElement(mazeElement, explosionElement);
 }
 
 function createWallElement(wall){
@@ -64,7 +79,9 @@ function createWallElement(wall){
 	mazeElement.appendChild(wallElement);
 }
 
-function initMaze(maze){
+function loadMaze(){
+	clearTemporaryHtmlElementsAndCssClasses();
+	const maze = levels[appState.currentLevel];
 	appState = {
 		...appState,
 		mazeEdges: getMazeEdges(maze, config.wallThickness),
@@ -75,6 +92,34 @@ function initMaze(maze){
 	rootElement.style.setProperty('--maze-height', maze.height + 'px');
 	
 	maze.walls.forEach(createWallElement);
+}
+
+function removeHtmlElement(element){
+	element.parentNode.removeChild(element);
+}
+
+function removeCssClass({element, cssClass}){
+	element.classList.remove(cssClass);
+}
+
+function clearTemporaryHtmlElementsAndCssClasses(){
+	appState.temporaryHtmlElements.forEach(removeHtmlElement);
+	appState.temporaryCssClasses.forEach(removeCssClass);
+	appState = {
+		...appState,
+		temporaryHtmlElements: [],
+		temporaryCssClasses: []
+	};
+}
+
+function restartLevel(){
+	clearTemporaryHtmlElementsAndCssClasses();
+	const maze = levels[appState.currentLevel];
+	appState = {
+		...appState,
+		rocket: initRocket(maze)
+	};
+	startSimulation();
 }
 
 function initRocket(maze){
@@ -117,6 +162,9 @@ function initListeners(){
 		if(e.code === "KeyW"){
 			document.dispatchEvent(new Event('click'));
 		}
+		if(e.code === "KeyX"){
+			restartLevel();
+		}
 	});
     
     document.addEventListener("rotarydetent", function(e)
@@ -135,19 +183,35 @@ function initListeners(){
 			rocket: accelerate(appState.rocket, appState.rocket.rotation, config.accelerateOnClick)
 		};
 	});
+    document.addEventListener("tizenhwkey", function(e)
+    {
+    	if(e.keyName === "back")
+    	{
+			restartLevel();
+    	}
+    });
 }
 
-function initSimulation(){
-	initListeners();
-	initMaze(levels[0]);
-	repaint();
-	
-	setTimeout(setupAnimations);
-	
+function startSimulation(){
+	if(stopRepaintingTimeout!==undefined){
+		clearTimeout(stopRepaintingTimeout);
+	}
+	if(repaintInterval!==undefined){
+		clearInterval(repaintInterval);
+	}
 	repaintInterval = setIntervalStartNow(()=>{
 		simulateStep();
 		repaint();
 	}, config.simulationStepMs);
+}
+
+function initSimulation(){
+	initListeners();
+	loadMaze();
+	repaint();
+	startSimulation();
+	
+	setTimeout(setupAnimations);
 }
 
 function loadHtmlElements(){

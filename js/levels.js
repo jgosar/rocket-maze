@@ -3,12 +3,12 @@ const levels = [
 		width: 800,
 		height: 600,
 		startPosition: {
-			x: 250,
-			y: 350,
+			x: 225,
+			y: 375,
 		},
 		walls: [],
 		wallsShorthand: [
-			'100,2,3,DRU'
+			'150,1,2,DRURRDRUULLLLD'
 		]
 	}
 ];

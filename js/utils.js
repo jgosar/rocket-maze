@@ -11,6 +11,23 @@ function mod(n, m) {
   return ((n % m) + m) % m;
 }
 
+function median(arr){
+  const mid = Math.floor(arr.length / 2);
+  const nums = [...arr].sort((a, b) => a - b);
+  return arr.length % 2 !== 0 ? nums[mid] : (nums[mid - 1] + nums[mid]) / 2;
+};
+
+function isBetween(num, start, end){
+	return num>=Math.min(start, end) && num<=Math.max(start, end);
+}
+
+function rangesOverlap(start1, end1, start2, end2){
+	return isBetween(start1, start2, end2) || 
+			isBetween(end1, start2, end2) || 
+			isBetween(start2, start1, end1) || 
+			isBetween(end2, start1, end1);
+}
+
 function addVectors(...vectors){
 	return vectors.reduce((prev, next)=>({x:prev.x+next.x, y: prev.y+next.y}), {x:0, y:0});
 }
@@ -93,4 +110,12 @@ function setIntervalStartNow(fn, t) {
 		fn();
 	});
     return setInterval(fn, t);
+}
+
+function concatIfDefined(items, newItem){
+	if(newItem!==undefined){
+		return items.concat([newItem]);
+	} else{
+		return items;
+	}
 }

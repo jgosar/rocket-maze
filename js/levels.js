@@ -1,7 +1,7 @@
 const levels = [
 	{
 		width: 800,
-		height: 800,
+		height: 600,
 		walls: [
 			{
 				position: {

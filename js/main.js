@@ -18,10 +18,10 @@ let repaintInterval;
 
 function simulateStep(){
 	const rocket = simulatePhysics(appState.rocket, config.gravity);
-	const collisions = detectRocketMazeCollisions(appState.rocket, appState.mazeEdges);
-	if(collisions){
-		console.log(getRocketMazeCollisions(appState.rocket, appState.mazeEdges));
-		clearInterval(repaintInterval);
+	const collisions = getRocketMazeCollisions(appState.rocket, appState.mazeEdges);
+	if(collisions.length>0){
+		console.log(collisions);
+		//clearInterval(repaintInterval);
 		/*
 		TODO:
 		stroke-width: 0.8px;
@@ -49,7 +49,7 @@ function setupTransitionInterval(){
 	root.style.setProperty('--simulation-step', config.simulationStepMs + 'ms');
 }
 
-function createWall(mazeElement, wall){
+function createWallElement(mazeElement, wall){
 	const wallRectangle = getWallRectangle(wall, config.wallThickness);
 	
 	const wallElement = document.createElement('div');
@@ -73,7 +73,7 @@ function initMaze(maze){
 	root.style.setProperty('--maze-height', maze.height + 'px');
 	
 	const mazeElement = document.getElementById('maze');
-	maze.walls.forEach(wall=>createWall(mazeElement, wall));
+	maze.walls.forEach(wall=>createWallElement(mazeElement, wall));
 }
 
 function rotateRight(){
@@ -94,12 +94,15 @@ function rotateLeft(){
 
 function initListeners(){
 	document.addEventListener('keyup', (e) => {
-		// Fake watch rotation events for testing on PC
+		// Fake watch events for testing on PC
 		if(e.code === "KeyD"){
 			document.dispatchEvent(new CustomEvent('rotarydetent', {detail:{direction: 'CW'}}));
 		}
 		if(e.code === "KeyA"){
 			document.dispatchEvent(new CustomEvent('rotarydetent', {detail:{direction: 'CCW'}}));
+		}
+		if(e.code === "KeyW"){
+			document.dispatchEvent(new Event('click'));
 		}
 	});
     
@@ -121,6 +124,46 @@ function initListeners(){
 	});
 }
 
+function generateExteriorWalls(maze){
+	maze.walls.push({
+		position: {
+			x: 0,
+			y: 0,
+		},
+		length: maze.width,
+		direction: 'x'
+	});
+	maze.walls.push({
+		position: {
+			x: 0,
+			y: 0,
+		},
+		length: maze.height,
+		direction: 'y'
+	});
+	maze.walls.push({
+		position: {
+			x: 0,
+			y: maze.height,
+		},
+		length: maze.width,
+		direction: 'x'
+	});
+	maze.walls.push({
+		position: {
+			x: maze.width,
+			y: 0,
+		},
+		length: maze.height,
+		direction: 'y'
+	});
+}
+
+function generateMazeWalls(){
+	// In the config we do not have to specify that the mazes have exterior walls, but we generate them here so the ship can't float outerHTML
+	levels.forEach(generateExteriorWalls);
+}
+
 function initSimulation(){
 	initListeners();
 	initMaze(levels[0]);
@@ -136,5 +179,6 @@ function initSimulation(){
 
 window.onload = function()
 {
+	generateMazeWalls();
 	initSimulation();
 }

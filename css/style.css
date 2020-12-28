@@ -2,6 +2,7 @@
 	--viewport-width: 360px;
 	--viewport-height: 360px;
 	--simulation-step: 0ms; /* Overridden by Javascript */
+	--explosion-duration: 0ms; /* Overridden by Javascript */
 	
 	--rocket-size: 60px;
 	--rocket-x: 0px; /* Overridden by Javascript */
@@ -40,6 +41,25 @@ body{
 	fill: #D0D0D0;
 }
 
+.rocket--exploded{
+	animation: rocket-explode var(--explosion-duration) linear forwards;
+}
+
+@keyframes rocket-explode {
+  0% {
+	fill: white;
+  }
+  25% {
+    fill: yellow;
+  }
+  50% {
+    fill: red;
+  }
+  100% {
+    fill: transparent;
+  }
+}
+
 .maze{
 	position:relative;
 	width: var(--maze-width);
@@ -54,4 +74,27 @@ body{
 .wall{
 	position: absolute;
 	background-color: #A0A0A0;
+}
+
+.explosion{
+	position: absolute;
+	border: 0px solid white;
+	border-radius: 50%;
+	transform: translateX(-50%)translateY(-50%);
+	animation: explode var(--explosion-duration) linear;
+}
+
+@keyframes explode {
+  0% {
+	border: 0px solid white;
+  }
+  25% {
+    border: 25px solid yellow;
+  }
+  50% {
+    border: 50px solid red;
+  }
+  100% {
+    border: 100px solid transparent;
+  }
 }

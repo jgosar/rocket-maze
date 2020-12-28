@@ -1,55 +1,57 @@
 let appState = {
-	rocket: {
-		position: {
-			x: 250,
-			y: 350,
-		},
-		speed: {
-			x: 0,
-			y: 0,
-		},
-		rotation: 0,
-	},
-	collisions: [],
+	rocket: undefined,
 	mazeEdges: []
 };
 
 let repaintInterval;
+let rootElement;
+let mazeElement;
+let rocketElement;
 
 function simulateStep(){
 	const rocket = simulatePhysics(appState.rocket, config.gravity);
 	const collisions = getRocketMazeCollisions(appState.rocket, appState.mazeEdges);
 	if(collisions.length>0){
 		console.log(collisions);
-		//clearInterval(repaintInterval);
-		/*
-		TODO:
-		stroke-width: 0.8px;
-    stroke: red;
-    stroke-linecap: round;
-	*/
+		collisions.forEach(createExplosionElement);
+		if(!rocket.exploded){
+			// We could stop repainting immediately, but if we wait for a bit, there will be more spectacular explosions :)
+			setTimeout(()=>clearInterval(repaintInterval), config.explosionDurationMs);
+		}
+		rocket.exploded = true;
 	}
 	
 	appState={
 		...appState,
 		rocket,
-		collisions
 	};
 }
 
 function repaint(){
-	let root = document.documentElement;
-	root.style.setProperty('--rocket-x', appState.rocket.position.x + 'px');
-	root.style.setProperty('--rocket-y', appState.rocket.position.y + 'px');
-	root.style.setProperty('--rocket-rotation', appState.rocket.rotation + 'deg');
+	rootElement.style.setProperty('--rocket-x', appState.rocket.position.x + 'px');
+	rootElement.style.setProperty('--rocket-y', appState.rocket.position.y + 'px');
+	rootElement.style.setProperty('--rocket-rotation', appState.rocket.rotation + 'deg');
+	
+	if(appState.rocket.exploded){
+		rocketElement.setAttribute('class', 'rocket rocket--exploded');
+	}
 }
 
-function setupTransitionInterval(){
-	let root = document.documentElement;
-	root.style.setProperty('--simulation-step', config.simulationStepMs + 'ms');
+function setupAnimations(){
+	rootElement.style.setProperty('--simulation-step', config.simulationStepMs + 'ms');
+	rootElement.style.setProperty('--explosion-duration', config.explosionDurationMs + 'ms');
 }
 
-function createWallElement(mazeElement, wall){
+function createExplosionElement([x, y]){
+	const explosionElement = document.createElement('div');
+	explosionElement.setAttribute('class', 'explosion');
+	explosionElement.style.left = x+'px';
+	explosionElement.style.top = y+'px';
+	
+	mazeElement.appendChild(explosionElement);
+}
+
+function createWallElement(wall){
 	const wallRectangle = getWallRectangle(wall, config.wallThickness);
 	
 	const wallElement = document.createElement('div');
@@ -65,19 +67,30 @@ function createWallElement(mazeElement, wall){
 function initMaze(maze){
 	appState = {
 		...appState,
-		mazeEdges: getMazeEdges(maze, config.wallThickness)
+		mazeEdges: getMazeEdges(maze, config.wallThickness),
+		rocket: initRocket(maze)
 	};
 	
-	const root = document.documentElement;
-	root.style.setProperty('--maze-width', maze.width + 'px');
-	root.style.setProperty('--maze-height', maze.height + 'px');
+	rootElement.style.setProperty('--maze-width', maze.width + 'px');
+	rootElement.style.setProperty('--maze-height', maze.height + 'px');
 	
-	const mazeElement = document.getElementById('maze');
-	maze.walls.forEach(wall=>createWallElement(mazeElement, wall));
+	maze.walls.forEach(createWallElement);
+}
+
+function initRocket(maze){
+	return {
+		position: maze.startPosition,
+		speed: {
+			x: 0,
+			y: 0,
+		},
+		rotation: 0,
+		exploded: false
+	};
 }
 
 function rotateRight(){
-	appState={
+	appState= {
 		...appState,
 		rocket: rotate(appState.rocket, 15)
 	};
@@ -85,7 +98,7 @@ function rotateRight(){
 }
 
 function rotateLeft(){
-	appState={
+	appState= {
 		...appState,
 		rocket: rotate(appState.rocket, -15)
 	};
@@ -124,52 +137,12 @@ function initListeners(){
 	});
 }
 
-function generateExteriorWalls(maze){
-	maze.walls.push({
-		position: {
-			x: 0,
-			y: 0,
-		},
-		length: maze.width,
-		direction: 'x'
-	});
-	maze.walls.push({
-		position: {
-			x: 0,
-			y: 0,
-		},
-		length: maze.height,
-		direction: 'y'
-	});
-	maze.walls.push({
-		position: {
-			x: 0,
-			y: maze.height,
-		},
-		length: maze.width,
-		direction: 'x'
-	});
-	maze.walls.push({
-		position: {
-			x: maze.width,
-			y: 0,
-		},
-		length: maze.height,
-		direction: 'y'
-	});
-}
-
-function generateMazeWalls(){
-	// In the config we do not have to specify that the mazes have exterior walls, but we generate them here so the ship can't float outerHTML
-	levels.forEach(generateExteriorWalls);
-}
-
 function initSimulation(){
 	initListeners();
 	initMaze(levels[0]);
 	repaint();
 	
-	setTimeout(setupTransitionInterval);
+	setTimeout(setupAnimations);
 	
 	repaintInterval = setIntervalStartNow(()=>{
 		simulateStep();
@@ -177,8 +150,15 @@ function initSimulation(){
 	}, config.simulationStepMs);
 }
 
+function loadHtmlElements(){
+	rootElement = document.documentElement;
+	mazeElement = document.getElementById('maze');
+	rocketElement = document.getElementById('rocket');
+}
+
 window.onload = function()
 {
+	loadHtmlElements();
 	generateMazeWalls();
 	initSimulation();
 }

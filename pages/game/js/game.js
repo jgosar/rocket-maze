@@ -112,6 +112,14 @@ function clearTemporaryHtmlElementsAndCssClasses(){
 	gameState.temporaryCssClasses = [];
 }
 
+function backButtonPressed(){
+	if(gameState.rocket.exploded){
+		restartLevel();
+	} else{
+		window.location = "../../pages/menu/menu.html"; 
+	}
+}
+
 function restartLevel(){
 	clearTemporaryHtmlElementsAndCssClasses();
 	const maze = levels[gameState.currentLevel];
@@ -154,7 +162,7 @@ function initListeners(){
 			document.dispatchEvent(new Event('click'));
 		}
 		if(e.code === "KeyX"){
-			restartLevel();
+			backButtonPressed();
 		}
 	});
     
@@ -175,7 +183,7 @@ function initListeners(){
     {
     	if(e.keyName === "back")
     	{
-			restartLevel();
+			backButtonPressed();
     	}
     });
 }

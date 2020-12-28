@@ -1,6 +1,4 @@
 :root{
-	--viewport-width: 360px;
-	--viewport-height: 360px;
 	--simulation-step: 0ms; /* Overridden by Javascript */
 	--explosion-duration: 0ms; /* Overridden by Javascript */
 	
@@ -14,18 +12,6 @@
 	
 	--maze-offset-x: calc((var(--viewport-width) / 2) - var(--rocket-x));
 	--maze-offset-y: calc((var(--viewport-height) / 2) - var(--rocket-y));
-}
-
-body{
-	background-color: black;
-	margin: 0px;
-}
-
-.viewport{
-	width: var(--viewport-width);
-	height: var(--viewport-height);
-	background-color: #303030;
-	overflow: hidden;
 }
 
 .rocket-wrapper{

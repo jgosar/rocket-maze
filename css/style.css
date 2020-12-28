@@ -1,0 +1,16 @@
+:root{
+	--viewport-width: 360px;
+	--viewport-height: 360px;
+}
+
+body{
+	background-color: black;
+	margin: 0px;
+    font-family: Verdana, Lucida Sans, Arial, Helvetica, sans-serif;
+}
+
+.viewport{
+	width: var(--viewport-width);
+	height: var(--viewport-height);
+	overflow: hidden;
+}

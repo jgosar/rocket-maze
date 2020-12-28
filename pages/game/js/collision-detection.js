@@ -1,5 +1,5 @@
-function getRocketMazeCollisions(rocket, mazeEdges){
-	return getCollisions(getRocketEdges(rocket), mazeEdges);
+function getRocketCollisions(rocket, edges){
+	return getCollisions(getRocketEdges(rocket), edges);
 }
 
 function getCollisions(edges1, edges2){
@@ -88,8 +88,22 @@ function getRocketEdges(rocket){
 	return getClosedPathEdges(positionedVertices);
 }
 
-function getMazeEdges(maze, wallThickness){
+function getMazeWallEdges(maze, wallThickness){
 	return maze.walls.map(wall=>getWallEdges(wall, wallThickness)).flat();
+}
+
+function getMazeFinishEdges(maze){
+	return getClosedPathEdges(getRectangleVertices(getFinishRectangle(maze)));
+}
+
+function getFinishRectangle(maze){
+	const finishSize = 50;
+	return {
+		x: maze.finishPosition.x - finishSize/2,
+		y: maze.finishPosition.y - finishSize/2,
+		width: finishSize,
+		height: finishSize
+	};
 }
 
 function getWallRectangle(wall, wallThickness){
@@ -111,7 +125,7 @@ function getWallRectangle(wall, wallThickness){
 
 function getWallEdges(wall, wallThickness){
 	const wallRectangle = getWallRectangle(wall, wallThickness);
-	const wallVertices = getRectangeVertices(wallRectangle);
+	const wallVertices = getRectangleVertices(wallRectangle);
 	
 	return getClosedPathEdges(wallVertices);
 }
@@ -126,4 +140,25 @@ function getClosedPathEdges(vertices){
 	}
 	
 	return edges;
+}
+
+function getRectangleVertices(rectangle){
+	return [
+		{
+			x: rectangle.x,
+			y: rectangle.y,
+		},
+		{
+			x: rectangle.x+rectangle.width,
+			y: rectangle.y,
+		},
+		{
+			x: rectangle.x+rectangle.width,
+			y: rectangle.y+rectangle.height,
+		},
+		{
+			x: rectangle.x,
+			y: rectangle.y+rectangle.height,
+		},
+	];
 }

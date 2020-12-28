@@ -59,27 +59,6 @@ function rotateVector(vector, rotation){
 	return createVector(direction + rotation, length);
 }
 
-function getRectangeVertices(rectangle){
-	return [
-		{
-			x: rectangle.x,
-			y: rectangle.y,
-		},
-		{
-			x: rectangle.x+rectangle.width,
-			y: rectangle.y,
-		},
-		{
-			x: rectangle.x+rectangle.width,
-			y: rectangle.y+rectangle.height,
-		},
-		{
-			x: rectangle.x,
-			y: rectangle.y+rectangle.height,
-		},
-	];
-}
-
 // Physics utils
 function simulatePhysics(object, gravity){
 	const speed = addVectors(object.speed, gravity)

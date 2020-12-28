@@ -1,9 +1,29 @@
 const levels = [
 	{
+		width: 600,
+		height: 800,
+		startPosition: {
+			x: 300,
+			y: 500,
+		},
+		finishPosition: {
+			x: 300,
+			y: 300,
+		},
+		walls: [],
+		wallsShorthand: [
+			'200,1,1,RDDLUU'
+		]
+	},
+	{
 		width: 800,
 		height: 600,
 		startPosition: {
 			x: 225,
+			y: 375,
+		},
+		finishPosition: {
+			x: 675,
 			y: 375,
 		},
 		walls: [],

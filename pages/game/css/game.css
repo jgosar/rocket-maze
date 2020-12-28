@@ -1,0 +1,105 @@
+:root{
+	--viewport-width: 360px;
+	--viewport-height: 360px;
+	--simulation-step: 0ms; /* Overridden by Javascript */
+	--explosion-duration: 0ms; /* Overridden by Javascript */
+	
+	--rocket-size: 60px;
+	--rocket-x: 0px; /* Overridden by Javascript */
+	--rocket-y: 0px; /* Overridden by Javascript */
+	--rocket-rotation: 0deg; /* Overridden by Javascript */
+	
+	--maze-width: 0px; /* Overridden by Javascript */
+	--maze-height: 0px; /* Overridden by Javascript */
+	
+	--maze-offset-x: calc((var(--viewport-width) / 2) - var(--rocket-x));
+	--maze-offset-y: calc((var(--viewport-height) / 2) - var(--rocket-y));
+}
+
+body{
+	background-color: black;
+	margin: 0px;
+}
+
+.viewport{
+	width: var(--viewport-width);
+	height: var(--viewport-height);
+	background-color: #303030;
+	overflow: hidden;
+}
+
+.rocket-wrapper{
+	position: absolute;
+	left: calc((var(--viewport-width) - var(--rocket-size)) / 2);
+	top: calc((var(--viewport-height) - var(--rocket-size)) / 2);
+}
+
+.rocket{
+	width: var(--rocket-size);
+	height: var(--rocket-size);
+	transform: rotate(var(--rocket-rotation));
+	fill: #D0D0D0;
+}
+
+.rocket--exploded{
+	animation: rocket-explode var(--explosion-duration) linear forwards;
+}
+
+@keyframes rocket-explode {
+  0% {
+	fill: white;
+  }
+  25% {
+    fill: yellow;
+  }
+  50% {
+    fill: red;
+  }
+  100% {
+    fill: transparent;
+  }
+}
+
+.maze{
+	position:relative;
+	width: var(--maze-width);
+	height: var(--maze-height);
+	left: var(--maze-offset-x);
+	top: var(--maze-offset-y);
+	background-color: blue;
+	transition: var(--simulation-step);
+	transition-timing-function: linear;
+}
+
+.wall{
+	position: absolute;
+	background-color: #A0A0A0;
+}
+
+.finish{
+	position: absolute;
+	background-color: #00A000;
+}
+
+.explosion{
+	position: absolute;
+	border: 0px solid white;
+	border-radius: 50%;
+	transform: translateX(-50%)translateY(-50%);
+	animation: explode var(--explosion-duration) linear;
+}
+
+@keyframes explode {
+  0% {
+	border: 0px solid white;
+  }
+  25% {
+    border: 25px solid yellow;
+  }
+  50% {
+    border: 50px solid red;
+  }
+  100% {
+    border: 100px solid transparent;
+  }
+}

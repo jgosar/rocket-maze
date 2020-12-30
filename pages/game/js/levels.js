@@ -30,6 +30,23 @@ const levels = [
 		wallsShorthand: [
 			'150,1,2,DRURRDRUULLLLD'
 		]
+	},
+	{
+		width: 600,
+		height: 800,
+		startPosition: {
+			x: 225,
+			y: 375,
+		},
+		finishPosition: {
+			x: 225,
+			y: 550,
+		},
+		walls: [],
+		wallsShorthand: [
+			'150,2,2,DD',
+			'150,2,3,LUURRDDDDLLUU'
+		]
 	}
 ];
 

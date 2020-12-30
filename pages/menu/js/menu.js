@@ -108,7 +108,7 @@ function moveFocusUp(){
 window.onload = function()
 {
 	initListeners();
-	generateLevelMenuItems(2);
+	generateLevelMenuItems(3);
 	displayMenu(levelsMenu);
 	setFocusedItemIndex(0);
 }

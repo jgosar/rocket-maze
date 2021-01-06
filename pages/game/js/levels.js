@@ -1,5 +1,18 @@
 const levels = [
 	{
+		// This is not a real level, but form simplicity, I want the real levels to be numbered from 1
+		width: 100,
+		height: 100,
+		startPosition: {
+			x: 50,
+			y: 50,
+		},
+		finishPosition: {
+			x: 50,
+			y: 50,
+		},
+	},
+	{
 		width: 600,
 		height: 800,
 		startPosition: {
@@ -58,6 +71,7 @@ function generateExteriorWalls(maze){
 }
 
 function generateWallsFromShorthand(maze){
+	maze.wallsShorthand ||= [];
 	maze.wallsShorthand.forEach(shorthand=>{
 		const parts = shorthand.split(',');
 		const scale = parseInt(parts[0]);
@@ -90,6 +104,7 @@ function generateWallsFromShorthand(maze){
 }
 
 function addWall(maze, x, y, length, orientation){
+	maze.walls ||= [];
 	maze.walls.push({
 		position: {
 			x,

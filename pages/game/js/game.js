@@ -2,11 +2,13 @@ let gameState = {
 	rocket: undefined,
 	wallEdges: [],
 	finishEdges: [],
-	currentLevel: 0,
+	levelId: 0,
 	temporaryHtmlElements: [],
 	temporaryCssClasses: [],
 	repaintInterval: undefined,
 	stopRepaintingTimeout: undefined,
+	stepsElapsed: 0,
+	fuelUsed: 0,
 	htmlElements: {
 		root: undefined,
 		maze: undefined,
@@ -15,6 +17,8 @@ let gameState = {
 };
 
 function simulateStep(){
+	gameState.stepsElapsed++;
+	
 	const rocket = simulatePhysics(gameState.rocket, config.gravity);
 	const wallCollisions = getRocketCollisions(gameState.rocket, gameState.wallEdges);
 	const finishCollisions = getRocketCollisions(gameState.rocket, gameState.finishEdges);
@@ -26,7 +30,9 @@ function simulateStep(){
 		}
 		rocket.exploded = true;
 	} else if(finishCollisions.length>0){
+		// Looks like the player finished the level, let's redirect him to the level summary
 		clearInterval(gameState.repaintInterval);
+		window.location = "../../pages/level-passed/level-passed.html?levelId="+gameState.levelId+"&stepsElapsed="+gameState.stepsElapsed+"&fuelUsed="+gameState.fuelUsed; 
 	}
 	
 	gameState.rocket = rocket;
@@ -90,7 +96,7 @@ function createDivFromRectangle(parent, cssClass, rectangle){
 
 function loadMaze(){
 	clearTemporaryHtmlElementsAndCssClasses();
-	const maze = levels[gameState.currentLevel];
+	const maze = levels[gameState.levelId];
 	gameState = {
 		...gameState,
 		wallEdges: getMazeWallEdges(maze, config.wallThickness),
@@ -122,7 +128,7 @@ function backButtonPressed(){
 
 function restartLevel(){
 	clearTemporaryHtmlElementsAndCssClasses();
-	const maze = levels[gameState.currentLevel];
+	const maze = levels[gameState.levelId];
 	gameState.rocket = initRocket(maze);
 	startSimulation();
 }
@@ -161,7 +167,7 @@ function initListeners(){
 		if(e.code === "KeyW"){
 			document.dispatchEvent(new Event('click'));
 		}
-		if(e.code === "KeyX"){
+		if(e.code === "Escape"){
 			backButtonPressed();
 		}
 	});
@@ -177,6 +183,7 @@ function initListeners(){
     	}
     });
 	document.addEventListener("click", ()=>{
+		gameState.fuelUsed++;
 		gameState.rocket = accelerate(gameState.rocket, gameState.rocket.rotation, config.accelerateOnClick);
 	});
     document.addEventListener("tizenhwkey", function(e)
@@ -218,15 +225,17 @@ function loadHtmlElements(){
 	};
 }
 
-function startGame(level)
+function startGame(levelId)
 {
 	gameState = {
 		rocket: undefined,
 		wallEdges: [],
 		finishEdges: [],
-		currentLevel: level,
+		levelId,
 		temporaryHtmlElements: [],
-		temporaryCssClasses: []
+		temporaryCssClasses: [],
+		stepsElapsed: 0,
+		fuelUsed: 0
 	}
 	
 	loadHtmlElements();
@@ -237,6 +246,6 @@ function startGame(level)
 window.onload = function()
 {
 	const urlParams = new URLSearchParams(window.location.search);
-	const level = parseInt(urlParams.get('level')-1);
-	startGame(level);
+	const levelId = parseInt(urlParams.get('level'));
+	startGame(levelId);
 }

@@ -3,7 +3,6 @@ let menuState = {
 	focusedIndex: 0
 }
 
-
 const levelsMenu = {
 	title: 'Choose level',
 	items: []

@@ -71,7 +71,7 @@ function generateExteriorWalls(maze){
 }
 
 function generateWallsFromShorthand(maze){
-	maze.wallsShorthand ||= [];
+	maze.wallsShorthand = maze.wallsShorthand || [];
 	maze.wallsShorthand.forEach(shorthand=>{
 		const parts = shorthand.split(',');
 		const scale = parseInt(parts[0]);
@@ -104,7 +104,7 @@ function generateWallsFromShorthand(maze){
 }
 
 function addWall(maze, x, y, length, orientation){
-	maze.walls ||= [];
+	maze.walls = maze.walls || [];
 	maze.walls.push({
 		position: {
 			x,

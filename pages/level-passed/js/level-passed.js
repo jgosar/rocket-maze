@@ -57,7 +57,8 @@ function getFromStorage(key){
 }
 
 function displayData(){
-	const thisScore = Math.max(100-levelPassedState.fuelUsed-Math.round(levelPassedState.stepsElapsed/10));
+	const levelMaxScore = levels[levelPassedState.levelId].maxScore;
+	const thisScore = Math.max(levelMaxScore-levelPassedState.fuelUsed-Math.round(levelPassedState.stepsElapsed/10), 0);
 	const bestScoreKey = 'bestScoreForLevel'+levelPassedState.levelId;
 	let bestScore = parseInt(getFromStorage(bestScoreKey))||0;
 	
@@ -74,8 +75,13 @@ function displayData(){
 	bestScoreElement.innerHTML = bestScore;
 	const retryButtonElement = document.getElementById('retry-button');
 	retryButtonElement.setAttribute('href', '../game/game.html?level='+levelPassedState.levelId);
+	
 	const nextButtonElement = document.getElementById('next-button');
-	nextButtonElement.setAttribute('href', '../game/game.html?level='+(levelPassedState.levelId+1)); //TODO: Check if next level exists
+	if(levels.length>levelPassedState.levelId+1){
+		nextButtonElement.setAttribute('href', '../game/game.html?level='+(levelPassedState.levelId+1));
+	} else{
+		nextButtonElement.style['display'] = 'none';
+	}
 }
 
 window.onload = function()

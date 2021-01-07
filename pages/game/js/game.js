@@ -196,6 +196,8 @@ function initListeners(){
 }
 
 function startSimulation(){
+	gameState.stepsElapsed = 0;
+	gameState.fuelUsed = 0;
 	if(gameState.stopRepaintingTimeout!==undefined){
 		clearTimeout(gameState.stopRepaintingTimeout);
 	}
@@ -228,14 +230,13 @@ function loadHtmlElements(){
 function startGame(levelId)
 {
 	gameState = {
+		...gameState,
 		rocket: undefined,
 		wallEdges: [],
 		finishEdges: [],
 		levelId,
 		temporaryHtmlElements: [],
 		temporaryCssClasses: [],
-		stepsElapsed: 0,
-		fuelUsed: 0
 	}
 	
 	loadHtmlElements();

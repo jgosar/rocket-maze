@@ -1,20 +1,11 @@
 const levels = [
 	{
-		// This is not a real level, but form simplicity, I want the real levels to be numbered from 1
-		width: 100,
-		height: 100,
-		startPosition: {
-			x: 50,
-			y: 50,
-		},
-		finishPosition: {
-			x: 50,
-			y: 50,
-		},
+		// This is not a real level, but for simplicity, I want the real levels to be numbered from 1
 	},
 	{
 		width: 600,
 		height: 800,
+		maxScore: 20,
 		startPosition: {
 			x: 300,
 			y: 500,
@@ -31,6 +22,7 @@ const levels = [
 	{
 		width: 800,
 		height: 600,
+		maxScore: 50,
 		startPosition: {
 			x: 225,
 			y: 375,
@@ -47,6 +39,7 @@ const levels = [
 	{
 		width: 600,
 		height: 800,
+		maxScore: 100,
 		startPosition: {
 			x: 225,
 			y: 375,

@@ -46,6 +46,23 @@
   }
 }
 
+.engine-flame{
+	fill: transparent;
+}
+
+.rocket--engine-on .engine-flame{
+	animation: engine-burst var(--explosion-duration) linear forwards;
+}
+
+@keyframes engine-burst {
+  0% {
+	fill: orange;
+  }
+  100% {
+    fill: transparent;
+  }
+}
+
 .maze{
 	position:relative;
 	width: var(--maze-width);

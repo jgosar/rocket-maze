@@ -46,6 +46,10 @@ function repaint(){
 	if(gameState.rocket.exploded){
 		addTemporaryCssClass(gameState.htmlElements.rocket, 'rocket--exploded');
 	}
+	if(gameState.rocket.engineOn){
+		gameState.rocket.engineOn = false;
+		addTemporaryCssClass(gameState.htmlElements.rocket, 'rocket--engine-on');
+	}
 }
 
 function addTemporaryCssClass(element, cssClass){
@@ -141,18 +145,26 @@ function initRocket(maze){
 			y: 0,
 		},
 		rotation: 0,
-		exploded: false
+		exploded: false,
+		engineOn: false
 	};
 }
 
-function rotateRight(){
+function rotateRocketRight(){
 	gameState.rocket = rotate(gameState.rocket, 15);
 	repaint();
 }
 
-function rotateLeft(){
+function rotateRocketLeft(){
 	gameState.rocket = rotate(gameState.rocket, -15);
 	repaint();
+}
+
+function accelerateRocket(){
+	gameState.htmlElements.rocket.classList.remove('rocket--engine-on');
+	gameState.fuelUsed++;
+	gameState.rocket = accelerate(gameState.rocket, gameState.rocket.rotation, config.accelerateOnClick);
+	gameState.rocket.engineOn = true;
 }
 
 function initListeners(){
@@ -177,14 +189,13 @@ function initListeners(){
     	const direction = e.detail.direction;
 
     	if (direction === "CW") {
-			rotateRight();
+			rotateRocketRight();
     	} else if (direction === "CCW") {
-			rotateLeft();
+			rotateRocketLeft();
     	}
     });
 	document.addEventListener("click", ()=>{
-		gameState.fuelUsed++;
-		gameState.rocket = accelerate(gameState.rocket, gameState.rocket.rotation, config.accelerateOnClick);
+		accelerateRocket();
 	});
     document.addEventListener("tizenhwkey", function(e)
     {

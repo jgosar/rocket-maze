@@ -34,28 +34,6 @@ function parseUrlParams(){
 	}
 }
 
-function saveToStorage(key, value){
-	if(typeof tizen !== 'undefined'){
-		tizen.preference.setValue(key, value);
-	} else{
-		// Testing on PC
-		localStorage.setItem(key, value);
-	}
-}
-
-function getFromStorage(key){
-	if(typeof tizen !== 'undefined'){
-		if(tizen.preference.exists(key)) {
-			return tizen.preference.getValue(key);
-		} else {
-			return null;
-		}
-	} else{
-		// Testing on PC
-		return localStorage.getItem(key)
-	}
-}
-
 function displayData(){
 	const levelMaxScore = levels[levelPassedState.levelId].maxScore;
 	const thisScore = Math.max(levelMaxScore-levelPassedState.fuelUsed-Math.round(levelPassedState.stepsElapsed/10), 0);

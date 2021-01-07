@@ -16,6 +16,16 @@ function range(start, end){
   return result;
 }
 
+function getMaxUnlockedLevel(){
+	for(let levelId=1;levelId<levels.length;levelId++){
+		const bestScoreKey = 'bestScoreForLevel'+levelId;
+		if(!isDefined(getFromStorage(bestScoreKey))){
+			return levelId;
+		}
+	}
+	return levels.length-1;
+}
+
 function generateLevelMenuItems(levelCount){
 	levelsMenu.items = range(1, levelCount).map(level=>({
 		name: 'Play level ' + level,
@@ -107,7 +117,7 @@ function moveFocusUp(){
 window.onload = function()
 {
 	initListeners();
-	generateLevelMenuItems(3);
+	generateLevelMenuItems(getMaxUnlockedLevel());
 	displayMenu(levelsMenu);
 	setFocusedItemIndex(0);
 }

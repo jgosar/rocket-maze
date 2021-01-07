@@ -63,7 +63,7 @@ function displayData(){
 	
 	if(thisScore>bestScore){
 		bestScore = thisScore;
-		saveToStorage(bestScore);
+		saveToStorage(bestScoreKey, bestScore);
 	}
 	
 	const levelIdElement = document.getElementById('level-id');

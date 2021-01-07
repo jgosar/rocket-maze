@@ -29,7 +29,7 @@ function simulateStep(){
 			gameState.stopRepaintingTimeout = setTimeout(()=>clearInterval(gameState.repaintInterval), config.explosionDurationMs);
 		}
 		rocket.exploded = true;
-	} else if(finishCollisions.length>0){
+	} else if(!rocket.exploded && finishCollisions.length>0){
 		// Looks like the player finished the level, let's redirect him to the level summary
 		clearInterval(gameState.repaintInterval);
 		window.location = "../../pages/level-passed/level-passed.html?levelId="+gameState.levelId+"&stepsElapsed="+gameState.stepsElapsed+"&fuelUsed="+gameState.fuelUsed; 

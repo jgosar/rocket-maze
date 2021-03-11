@@ -15,3 +15,12 @@ The control inputs are as follows:
 - Back button: Respawns the rocket after you crash
 
 The game currently has 3 levels, but is still very much a work in progress.
+
+## Try it in a browser
+
+Since this is a completely normal HTML+JS+CSS app, it's also playable in the browser, although the experience is not as good, especially regarding the speed at which you can rotate the ship. The game is available [here](https://jgosar.github.io/rocket-maze/index.html).
+Key mappings for testing the game on the PC are as follows:
+- Bezel rotate left => A
+- Bezel rotate right => D
+- Tap screen => W
+- Back button => Esc

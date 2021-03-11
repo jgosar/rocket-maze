@@ -9,4 +9,9 @@ Crashing into a wall results in a spectacular explosion :)
 ![image](https://user-images.githubusercontent.com/36840705/110826338-425c1100-8295-11eb-972c-d51fd8416be3.png)
 ![image](https://user-images.githubusercontent.com/36840705/110826363-48ea8880-8295-11eb-908c-d1be58c4e449.png)
 
+The control inputs are as follows:
+- Rotate bezel: Rotates the rocket
+- Tap screen: Fire engine
+- Back button: Respawns the rocket after you crash
+
 The game currently has 3 levels, but is still very much a work in progress.
